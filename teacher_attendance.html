@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{% block title %}Take Attendance{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('dashboard') }}">Teacher Dashboard</a>
+        <div class="d-flex">
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Teacher Dashboard</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('dashboard') }}" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('teacher_attendance') }}" class="nav-item active">
+                <i class="fas fa-calendar-check"></i>
+                <span>Take Attendance</span>
+            </a>
+            <a href="{{ url_for('teacher_grade_categories') }}" class="nav-item">
+                <i class="fas fa-star"></i>
+                <span>Grade Students</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="welcome-banner">
+            <h1>Take Attendance - {{ subject.name }}</h1>
+            <p>Welcome back, {{ teacher.first_name }} {{ teacher.last_name }}!</p>
+        </div>
+
+        <div class="attendance-form-container">
+            <form method="POST" class="attendance-form">
+                <div class="form-header">
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="date" name="date" id="date" value="{{ current_date.strftime('%Y-%m-%d') }}" required>
+                    </div>
+                </div>
+
+                <div class="students-list">
+                    {% if students %}
+                    <table class="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                            <tr>
+                                <td>{{ student.student_id }}</td>
+                                <td>{{ student.first_name }} {{ student.last_name }}</td>
+                                <td>
+                                    <select name="status_{{ student.id }}" class="status-select" required>
+                                        <option value="present">Present</option>
+                                        <option value="absent">Absent</option>
+                                        <option value="late">Late</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="text" name="notes_{{ student.id }}" placeholder="Add notes...">
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="no-students-message">
+                        <p>No students are currently enrolled in {{ subject.name }}.</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if students %}
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="markAllPresent">Mark All Present</button>
+                    <button type="button" class="btn btn-secondary" id="markAllAbsent">Mark All Absent</button>
+                    <button type="submit" class="btn btn-primary">Save Attendance</button>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: white;
+    color: #495057;
+    padding: 1.5rem;
+    border-right: 1px solid #e9ecef;
+}
+
+.sidebar-header h2 {
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    color: #36A9E1;
+    font-weight: 500;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem;
+    color: #495057;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s;
+    font-size: 1.1rem;
+}
+
+.nav-item:hover {
+    background-color: #e9ecef;
+    color: #36A9E1;
+}
+
+.nav-item.active {
+    background-color: #36A9E1;
+    color: white;
+}
+
+.nav-item i {
+    width: 20px;
+    text-align: center;
+}
+
+.main-content {
+    flex: 1;
+    padding: 2rem;
+}
+
+.welcome-banner {
+    background-color: #36A9E1;
+    color: white;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.welcome-banner h1 {
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.welcome-banner p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.attendance-form-container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.form-header {
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.75rem;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #36A9E1;
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+}
+
+.attendance-table th,
+.attendance-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.attendance-table th {
+    background-color: #f8f9fa;
+    font-weight: 500;
+    color: #36A9E1;
+}
+
+.attendance-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.status-select {
+    padding: 0.5rem;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background-color: white;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #36A9E1;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2d8fc0;
+}
+
+.btn-secondary {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+.btn-secondary:hover {
+    background-color: #dee2e6;
+}
+
+.no-students-message {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.navbar {
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    color: #36A9E1;
+    font-weight: 500;
+    font-size: 1.2rem;
+}
+
+.btn-outline-danger {
+    border-width: 2px;
+    font-weight: 500;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markAllPresentBtn = document.getElementById('markAllPresent');
+    const markAllAbsentBtn = document.getElementById('markAllAbsent');
+
+    if (markAllPresentBtn) {
+        markAllPresentBtn.addEventListener('click', function() {
+            document.querySelectorAll('.status-select').forEach(select => {
+                select.value = 'present';
+            });
+        });
+    }
+
+    if (markAllAbsentBtn) {
+        markAllAbsentBtn.addEventListener('click', function() {
+            document.querySelectorAll('.status-select').forEach(select => {
+                select.value = 'absent';
+            });
+        });
+    }
+});
+</script>
+{% endblock %} 

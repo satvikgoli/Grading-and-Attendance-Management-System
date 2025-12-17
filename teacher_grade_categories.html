@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+
+{% block title %}Teacher Dashboard - Grade Categories{% endblock %}
+
+{% block content %}
+<div class="teacher-dashboard">
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+        <div class="nav-item">
+            <a href="{{ url_for('dashboard') }}" class="nav-link">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="{{ url_for('teacher_attendance') }}" class="nav-link">
+                <i class="fas fa-calendar-check"></i> Take Attendance
+            </a>
+        </div>
+        <div class="nav-item active">
+            <a href="{{ url_for('teacher_grade_categories') }}" class="nav-link">
+                <i class="fas fa-star"></i> Grades
+            </a>
+        </div>
+        <div class="nav-item logout-btn">
+            <a href="{{ url_for('logout') }}" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <h2>Grade Categories - {{ subject.name }}</h2>
+            <p>Welcome back, {{ teacher.first_name }} {{ teacher.last_name }}!</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Create New Category Form -->
+        <div class="content-section">
+            <div class="section-header">
+                <h3>Create New Grade Category</h3>
+            </div>
+            <div class="section-content">
+                <form method="POST" action="{{ url_for('teacher_grade_categories') }}" class="create-category-form">
+                    <div class="input-group">
+                        <input type="text" 
+                               name="category_name" 
+                               class="form-control" 
+                               placeholder="Enter category name (e.g., Midterm Exam, Assignment 1)"
+                               required>
+                        <button type="submit" class="btn btn-primary">Create Category</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Existing Categories -->
+        <div class="content-section">
+            <div class="section-header">
+                <h3>Existing Categories</h3>
+            </div>
+            <div class="section-content">
+                {% if categories %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Category Name</th>
+                                    <th>Created Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for category in categories %}
+                                    <tr>
+                                        <td>{{ category.name }}</td>
+                                        <td>{{ category.created_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                        <td>
+                                            <a href="{{ url_for('teacher_grades', category_id=category.id) }}" 
+                                               class="btn btn-primary">
+                                                Manage Grades
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="no-data-message">
+                        No grade categories created yet. Create your first category above.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-color: #36A9E1;
+        --secondary-color: #6c757d;
+        --light-bg: #f8f9fa;
+        --border-color: #dee2e6;
+        --danger-color: #dc3545;
+    }
+
+    .teacher-dashboard {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        min-height: 100vh;
+        background-color: var(--light-bg);
+    }
+
+    .sidebar {
+        background-color: white;
+        padding: 2rem 1rem;
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .nav-item {
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .nav-item:hover {
+        background-color: var(--light-bg);
+    }
+
+    .nav-item.active {
+        background-color: var(--primary-color);
+    }
+
+    .nav-item.active .nav-link {
+        color: white;
+    }
+
+    .nav-link {
+        color: var(--secondary-color);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .nav-link:hover {
+        color: var(--primary-color);
+    }
+
+    .nav-item.active .nav-link:hover {
+        color: white;
+    }
+
+    .logout-btn {
+        margin-top: auto;
+        background-color: var(--danger-color);
+    }
+
+    .logout-btn .nav-link {
+        color: white;
+    }
+
+    .logout-btn:hover {
+        background-color: #c82333;
+    }
+
+    .main-content {
+        padding: 2rem;
+    }
+
+    .welcome-banner {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .welcome-banner h2 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .content-section {
+        background-color: white;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .section-header {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-header h3 {
+        color: var(--primary-color);
+        margin: 0;
+    }
+
+    .section-content {
+        padding: 2rem;
+    }
+
+    .create-category-form {
+        max-width: 600px;
+    }
+
+    .input-group {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .form-control {
+        flex: 1;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        border: none;
+        padding: 0.5rem 1.5rem;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #2d8ec0;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table th,
+    .table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .table th {
+        text-align: left;
+        color: var(--secondary-color);
+        font-weight: 600;
+    }
+
+    .no-data-message {
+        text-align: center;
+        color: var(--secondary-color);
+        padding: 2rem;
+        background-color: var(--light-bg);
+        border-radius: 5px;
+    }
+
+    .alert {
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .alert-error {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+</style>
+{% endblock %} 

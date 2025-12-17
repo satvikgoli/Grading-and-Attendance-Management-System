@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Teacher Registration{% endblock %}
+
+{% block content %}
+<div class="registration-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="registration-card">
+                    <div class="card-header">
+                        <h2>Teacher Registration</h2>
+                        <p class="text-muted">Create your teacher account</p>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="username">Username</label>
+                                        <input type="text" class="form-control custom-input" id="username" name="username" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input type="email" class="form-control custom-input" id="email" name="email" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="password">Password</label>
+                                        <input type="password" class="form-control custom-input" id="password" name="password" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="confirm_password">Confirm Password</label>
+                                        <input type="password" class="form-control custom-input" id="confirm_password" name="confirm_password" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="first_name">First Name</label>
+                                        <input type="text" class="form-control custom-input" id="first_name" name="first_name" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="last_name">Last Name</label>
+                                        <input type="text" class="form-control custom-input" id="last_name" name="last_name" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="subject">Subject</label>
+                                        <select class="form-select custom-input" id="subject" name="subject" required>
+                                            <option value="">Select Subject</option>
+                                            {% for subject in subjects %}
+                                            <option value="{{ subject.name }}">{{ subject.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions mt-5">
+                                <button type="submit" class="btn btn-register">Register Now</button>
+                                <a href="{{ url_for('login') }}" class="btn btn-back">Back to Login</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .registration-page {
+        min-height: 100vh;
+        background: var(--light-blue);
+        padding: 3rem 0;
+    }
+
+    .registration-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .card-header {
+        background: var(--primary-blue);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .card-header h2 {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 600;
+    }
+
+    .card-header p {
+        margin: 0.5rem 0 0;
+        opacity: 0.8;
+    }
+
+    .card-body {
+        padding: 3rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--primary-blue);
+        font-weight: 500;
+    }
+
+    .custom-input {
+        height: 48px;
+        border-radius: 10px;
+        border: 2px solid var(--medium-blue);
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .custom-input:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(54, 169, 225, 0.1);
+    }
+
+    .form-actions {
+        text-align: center;
+    }
+
+    .btn {
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-register {
+        background: var(--primary-blue);
+        color: white;
+        border: none;
+        margin-right: 1rem;
+    }
+
+    .btn-register:hover {
+        background: #2d8fc0;
+        transform: translateY(-2px);
+    }
+
+    .btn-back {
+        background: var(--medium-blue);
+        color: var(--primary-blue);
+        border: none;
+    }
+
+    .btn-back:hover {
+        background: var(--light-blue);
+    }
+
+    @media (max-width: 768px) {
+        .registration-page {
+            padding: 1rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %} 

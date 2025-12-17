@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - Grading & Attendance Management System{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Animation -->
+<div class="hero-section position-relative overflow-hidden">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="text-center mb-5">
+                    <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeInDown">GAMS</h1>
+                    <p class="lead mb-4 animate__animated animate__fadeInUp">A comprehensive solution for managing grades and attendance with ease and efficiency.</p>
+                </div>
+                {% if not current_user.is_authenticated %}
+                <div class="card shadow-lg mb-5">
+                    <div class="card-body p-5">
+                        <div class="row">
+                            <div class="col-md-6 border-end">
+                                <div class="text-center mb-4">
+                                    <h3>Login</h3>
+                                    <p class="text-muted">Access your account</p>
+                                </div>
+                                <form method="POST" action="{{ url_for('login') }}">
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control form-control-lg" name="username" placeholder="Username" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="password" class="form-control form-control-lg" name="password" id="login-password" placeholder="Password" required>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-center mb-4">
+                                    <h3>Register</h3>
+                                    <p class="text-muted">Create a new account</p>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <a href="{{ url_for('student_register') }}" class="btn btn-outline-primary btn-lg">Register as Student</a>
+                                    <a href="{{ url_for('teacher_register') }}" class="btn btn-outline-primary btn-lg">Register as Teacher</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center mb-5">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg px-4">Go to Dashboard</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="hero-shape">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+            <path fill="#f8f9fa" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+</div>
+
+<!-- Developers Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-2">Developers</h2>
+        <p class="text-center text-muted mb-5">The talented team behind this system</p>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-user-circle fa-4x text-primary"></i>
+                        </div>
+                        <h4 class="card-title">Satvik Goli</h4>
+                        <p class="card-text text-muted">Database and Backend Developer</p>
+                        <p class="card-text">Texas Tech University</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-5">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-user-circle fa-4x text-primary"></i>
+                        </div>
+                        <h4 class="card-title">Nagarjuna Reddy Bhimavarapu</h4>
+                        <p class="card-text text-muted">Frontend Developer and System Manager</p>
+                        <p class="card-text">Texas Tech University</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Features</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-user-graduate fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="card-title text-center">Student Portal</h5>
+                        <p class="card-text text-muted">Access grades, view attendance records, and track academic progress all in one place.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-chalkboard-teacher fa-3x text-success"></i>
+                        </div>
+                        <h5 class="card-title text-center">Teacher Portal</h5>
+                        <p class="card-text text-muted">Manage classes, record attendance, and update grades efficiently.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-user-shield fa-3x text-info"></i>
+                        </div>
+                        <h5 class="card-title text-center">Admin Portal</h5>
+                        <p class="card-text text-muted">Oversee the entire system, manage users, and generate reports.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Registration Section -->
+<section id="registration" class="py-5" style="display: none;">
+    <div class="container">
+        <h2 class="text-center mb-5">Registration</h2>
+        
+        <!-- Registration Tabs -->
+        <ul class="nav nav-pills mb-4 justify-content-center" id="registrationTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="student-tab" data-bs-toggle="pill" data-bs-target="#student-registration" type="button" role="tab">
+                    Student Registration
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="teacher-tab" data-bs-toggle="pill" data-bs-target="#teacher-registration" type="button" role="tab">
+                    Teacher Registration
+                </button>
+            </li>
+        </ul>
+        
+        <!-- Registration Forms -->
+        <div class="tab-content" id="registrationTabsContent">
+            <!-- Student Registration Form -->
+            <div class="tab-pane fade show active" id="student-registration" role="tabpanel">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <h3 class="card-title text-center mb-4">Student Registration</h3>
+                                <form method="POST" action="{{ url_for('student_register') }}">
+                                    <div class="mb-3">
+                                        <label for="student_id" class="form-label">Student ID</label>
+                                        <input type="text" class="form-control" id="student_id" name="student_id" required>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="first_name" class="form-label">First Name</label>
+                                            <input type="text" class="form-control" id="first_name" name="first_name" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="last_name" class="form-label">Last Name</label>
+                                            <input type="text" class="form-control" id="last_name" name="last_name" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label for="gender" class="form-label">Gender</label>
+                                            <select class="form-select" id="gender" name="gender" required>
+                                                <option value="">Select Gender</option>
+                                                <option value="M">Male</option>
+                                                <option value="F">Female</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-8 mb-3">
+                                            <label for="date_of_birth" class="form-label">Date of Birth</label>
+                                            <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Mail ID</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="phone_number" class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-control" id="phone_number" name="phone_number" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="class_name" class="form-label">Class</label>
+                                        <input type="text" class="form-control" id="class_name" name="class_name" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="username" name="username" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="password" name="password" required>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">Register as Student</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Teacher Registration Form -->
+            <div class="tab-pane fade" id="teacher-registration" role="tabpanel">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <h3 class="card-title text-center mb-4">Teacher Registration</h3>
+                                <form method="POST" action="{{ url_for('teacher_register') }}">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="teacher_first_name" class="form-label">First Name</label>
+                                            <input type="text" class="form-control" id="teacher_first_name" name="first_name" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="teacher_last_name" class="form-label">Last Name</label>
+                                            <input type="text" class="form-control" id="teacher_last_name" name="last_name" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="teacher_email" class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="teacher_email" name="email" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="subject" class="form-label">Subject</label>
+                                        <select class="form-select" id="subject" name="subject" required>
+                                            <option value="">Select Subject</option>
+                                            <option value="Advance Database Management Systems">Advance Database Management Systems</option>
+                                            <option value="Analysis of Algorithms">Analysis of Algorithms</option>
+                                            <option value="Advanced Operating Systems">Advanced Operating Systems</option>
+                                            <option value="Theory of Automata">Theory of Automata</option>
+                                            <option value="Computer Organization Architecture">Computer Organization Architecture</option>
+                                            <option value="Logics for Computer Scientists">Logics for Computer Scientists</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="teacher_username" class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="teacher_username" name="username" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="teacher_password" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="teacher_password" name="password" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="teacher_confirm_password" class="form-label">Confirm Password</label>
+                                        <input type="password" class="form-control" id="teacher_confirm_password" name="confirm_password" required>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">Register as Teacher</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">How It Works</h2>
+            <p class="lead text-muted">Simple steps to get started with our system</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="step-item text-center">
+                    <div class="step-number bg-primary text-white rounded-circle mb-3 mx-auto">1</div>
+                    <h3 class="h5">Login to Your Account</h3>
+                    <p>Access your personalized dashboard with your unique credentials.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="step-item text-center">
+                    <div class="step-number bg-primary text-white rounded-circle mb-3 mx-auto">2</div>
+                    <h3 class="h5">Manage Your Data</h3>
+                    <p>Teachers can take attendance and grade students, while students can view their records.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="step-item text-center">
+                    <div class="step-number bg-primary text-white rounded-circle mb-3 mx-auto">3</div>
+                    <h3 class="h5">Track Progress</h3>
+                    <p>Monitor attendance and academic performance with detailed reports and analytics.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="py-5 bg-dark text-white">
+    <div class="container py-5 text-center">
+        <h2 class="display-5 fw-bold mb-4">Ready to Get Started?</h2>
+        <p class="lead mb-4">Join our community of educators and students today</p>
+        
+        {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg px-5">Login Now</a>
+        {% else %}
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg px-5">Go to Dashboard</a>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Add custom styles -->
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #2575fc 0%, #2575fc 100%);
+        color: white;
+        padding: 80px 0 160px;
+        position: relative;
+        margin-bottom: 60px;
+    }
+    
+    .hero-shape {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1;
+    }
+    
+    .card {
+        position: relative;
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.98);
+    }
+    
+    .form-control {
+        padding: 12px;
+        border-radius: 8px;
+        height: auto;
+    }
+    
+    .form-control-lg {
+        font-size: 1rem;
+    }
+    
+    .btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+    }
+    
+    .btn-lg {
+        font-size: 1.1rem;
+    }
+    
+    .register-btn {
+        padding: 15px 24px;
+    }
+    
+    .border-end {
+        border-right: 1px solid #dee2e6;
+    }
+    
+    @media (max-width: 767.98px) {
+        .hero-section {
+            padding: 60px 0 120px;
+        }
+        
+        .border-end {
+            border-right: none;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+        }
+    }
+    
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .hover-card {
+        transition: transform 0.3s ease;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-10px);
+    }
+    
+    .stat-item {
+        padding: 20px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-item:hover {
+        transform: translateY(-5px);
+    }
+    
+    .step-number {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+</style>
+
+<!-- Add animation library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+<!-- Add counter animation script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Simple counter animation
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            const target = parseInt(counter.innerText);
+            let count = 0;
+            const speed = 200;
+            const updateCount = () => {
+                const increment = target / speed;
+                if (count < target) {
+                    count += increment;
+                    counter.innerText = Math.ceil(count) + (counter.innerText.includes('+') ? '+' : '');
+                    setTimeout(updateCount, 1);
+                } else {
+                    counter.innerText = target + (counter.innerText.includes('+') ? '+' : '');
+                }
+            };
+            updateCount();
+        });
+    });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle registration button clicks
+    document.querySelectorAll('[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            
+            // Show registration section
+            document.getElementById('registration').style.display = 'block';
+            
+            // Smooth scroll to registration section
+            const targetId = this.getAttribute('href').split('#')[1];
+            const target = document.getElementById(targetId);
+            target.scrollIntoView({ behavior: 'smooth' });
+            
+            // Activate the correct tab
+            if (targetId === 'student-registration' || targetId === 'teacher-registration') {
+                const tabToActivate = document.querySelector(`[data-bs-target="#${targetId}"]`);
+                const tab = new bootstrap.Tab(tabToActivate);
+                tab.show();
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 

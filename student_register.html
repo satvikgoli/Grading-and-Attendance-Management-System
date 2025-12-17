@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+
+{% block title %}Student Registration{% endblock %}
+
+{% block content %}
+<div class="registration-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="registration-card">
+                    <div class="card-header">
+                        <h2>Student Registration</h2>
+                        <p class="text-muted">Create your student account</p>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="username">Username</label>
+                                        <input type="text" class="form-control custom-input" id="username" name="username" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="password">Password</label>
+                                        <input type="password" class="form-control custom-input" id="password" name="password" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="student_id">Student ID</label>
+                                        <input type="text" class="form-control custom-input" id="student_id" name="student_id" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="gender">Gender</label>
+                                        <select class="form-select custom-input" id="gender" name="gender" required>
+                                            <option value="">Select Gender</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="first_name">First Name</label>
+                                        <input type="text" class="form-control custom-input" id="first_name" name="first_name" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="last_name">Last Name</label>
+                                        <input type="text" class="form-control custom-input" id="last_name" name="last_name" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input type="email" class="form-control custom-input" id="email" name="email" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="phone_number">Phone Number</label>
+                                        <input type="tel" class="form-control custom-input" id="phone_number" name="phone_number" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="date_of_birth">Date of Birth</label>
+                                        <input type="date" class="form-control custom-input" id="date_of_birth" name="date_of_birth" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="subjects-section mt-5">
+                                <h3>Select Your Subjects</h3>
+                                <p class="text-muted mb-4">Choose up to 3 subjects for your program</p>
+                                <div class="subject-grid">
+                                    {% for subject in subjects %}
+                                    <div class="subject-card">
+                                        <input class="subject-checkbox" type="checkbox" name="subjects" value="{{ subject.id }}" id="subject{{ subject.id }}">
+                                        <label class="subject-label" for="subject{{ subject.id }}">
+                                            {{ subject.name }}
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="form-actions mt-5">
+                                <button type="submit" class="btn btn-register">Register Now</button>
+                                <a href="{{ url_for('login') }}" class="btn btn-back">Back to Login</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .registration-page {
+        min-height: 100vh;
+        background: var(--light-blue);
+        padding: 3rem 0;
+    }
+
+    .registration-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .card-header {
+        background: var(--primary-blue);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .card-header h2 {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 600;
+    }
+
+    .card-header p {
+        margin: 0.5rem 0 0;
+        opacity: 0.8;
+    }
+
+    .card-body {
+        padding: 3rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--primary-blue);
+        font-weight: 500;
+    }
+
+    .custom-input {
+        height: 48px;
+        border-radius: 10px;
+        border: 2px solid var(--medium-blue);
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .custom-input:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(54, 169, 225, 0.1);
+    }
+
+    .subjects-section {
+        background: var(--light-blue);
+        padding: 2rem;
+        border-radius: 15px;
+    }
+
+    .subjects-section h3 {
+        color: var(--primary-blue);
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .subject-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .subject-card {
+        position: relative;
+        background: white;
+        border: 2px solid var(--medium-blue);
+        border-radius: 12px;
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .subject-card:hover {
+        border-color: var(--primary-blue);
+        transform: translateY(-2px);
+    }
+
+    .subject-checkbox {
+        position: absolute;
+        opacity: 0;
+    }
+
+    .subject-label {
+        display: block;
+        padding: 0.5rem;
+        margin: 0;
+        color: var(--primary-blue);
+        font-weight: 500;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .subject-checkbox:checked + .subject-label {
+        color: var(--primary-blue);
+        background: var(--light-blue);
+        border-radius: 8px;
+    }
+
+    .form-actions {
+        text-align: center;
+    }
+
+    .btn {
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 500;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-register {
+        background: var(--primary-blue);
+        color: white;
+        border: none;
+        margin-right: 1rem;
+    }
+
+    .btn-register:hover {
+        background: #2d8fc0;
+        transform: translateY(-2px);
+    }
+
+    .btn-back {
+        background: var(--medium-blue);
+        color: var(--primary-blue);
+        border: none;
+    }
+
+    .btn-back:hover {
+        background: var(--light-blue);
+    }
+
+    @media (max-width: 768px) {
+        .registration-page {
+            padding: 1rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .subject-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.subject-checkbox');
+    const maxAllowed = 3;
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const checkedCount = document.querySelectorAll('.subject-checkbox:checked').length;
+            if (checkedCount > maxAllowed) {
+                this.checked = false;
+                alert('You can only select up to 3 subjects');
+            }
+            
+            // Add/remove selected class to parent card
+            const card = this.closest('.subject-card');
+            if (this.checked) {
+                card.style.borderColor = '#2c3e50';
+                card.style.backgroundColor = 'rgba(44, 62, 80, 0.1)';
+            } else {
+                card.style.borderColor = '#e0e6ed';
+                card.style.backgroundColor = 'white';
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 

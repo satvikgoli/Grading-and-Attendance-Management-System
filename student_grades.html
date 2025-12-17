@@ -1,0 +1,392 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - Grades{% endblock %}
+
+{% block content %}
+<div class="student-dashboard">
+    <!-- Welcome Banner -->
+    <div class="welcome-banner">
+        <h2>Hello, {{ student.first_name }}</h2>
+    </div>
+
+    <div class="dashboard-content">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="nav-item">
+                <a href="{{ url_for('dashboard') }}" class="nav-link">Profile</a>
+            </div>
+            <div class="nav-item">
+                <a href="{{ url_for('attendance') }}" class="nav-link">Attendance</a>
+            </div>
+            <div class="nav-item active">
+                <a href="{{ url_for('student_grades') }}" class="nav-link">Grades</a>
+            </div>
+            <div class="nav-item logout-btn">
+                <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="grades-overview">
+                <h3>My Academic Performance</h3>
+                
+                <!-- Overall Performance Card -->
+                <div class="overall-performance">
+                    <div class="performance-card">
+                        <h4>Overall Performance</h4>
+                        {% if overall_average > 0 %}
+                        <div class="grade-circle {% if overall_average >= 90 %}excellent{% elif overall_average >= 80 %}good{% elif overall_average >= 70 %}average{% else %}needs-improvement{% endif %}">
+                            {{ "%.1f"|format(overall_average) }}%
+                            <span class="letter-grade">{{ overall_letter_grade }}</span>
+                        </div>
+                        {% else %}
+                        <div class="no-grade-circle">
+                            <span>No Grades Yet</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Individual Subject Grades -->
+                <div class="subjects-grid">
+                    {% for subject_name, subject_info in grades_by_subject.items() %}
+                    <div class="subject-card">
+                        <div class="subject-header">
+                            <h4>{{ subject_name }}</h4>
+                            <span class="teacher-name">{{ subject_info.teacher }}</span>
+                        </div>
+                        <div class="grade-info">
+                            {% if subject_info.average is not none %}
+                            <div class="subject-average">
+                                <h5>Subject Average</h5>
+                                <div class="grade-value {% if subject_info.average >= 90 %}excellent{% elif subject_info.average >= 80 %}good{% elif subject_info.average >= 70 %}average{% else %}needs-improvement{% endif %}">
+                                    {{ "%.1f"|format(subject_info.average) }}%
+                                    {% if subject_info.letter_grade %}
+                                    <span class="letter-grade">{{ subject_info.letter_grade }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="category-grades">
+                                {% if subject_info.grades %}
+                                    {% for grade in subject_info.grades %}
+                                    <div class="category-grade">
+                                        <span class="category-name">{{ grade.category }}</span>
+                                        <span class="grade-value {% if grade.grade >= 90 %}excellent{% elif grade.grade >= 80 %}good{% elif grade.grade >= 70 %}average{% else %}needs-improvement{% endif %}">
+                                            {{ "%.1f"|format(grade.grade) }}%
+                                            {% if grade.grade is not none %}
+                                            <span class="letter-grade">{{ get_letter_grade(grade.grade) }}</span>
+                                            {% endif %}
+                                        </span>
+                                        <div class="grade-date">
+                                            Last Updated: {{ grade.date.strftime('%Y-%m-%d') }}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                <div class="no-grade">
+                                    Not Graded Yet
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Existing dashboard styles */
+    .student-dashboard {
+        height: 100vh;
+        background-color: #f8f9fa;
+    }
+
+    .welcome-banner {
+        background-color: #36A9E1;
+        color: white;
+        padding: 1.5rem 2rem;
+        text-align: center;
+    }
+
+    .dashboard-content {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        height: calc(100vh - 80px);
+    }
+
+    .sidebar {
+        background-color: var(--light-blue);
+        padding: 1.5rem;
+        border-right: 1px solid var(--medium-blue);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .nav-item {
+        padding: 1.2rem;
+        margin: 0.5rem 0;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        font-size: 1.1rem;
+    }
+
+    .nav-item:hover {
+        background-color: var(--medium-blue);
+    }
+
+    .nav-item.active {
+        background-color: #36A9E1;
+        color: white;
+    }
+
+    .nav-link {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+    }
+
+    .logout-btn {
+        margin-top: auto;
+        background-color: #ff4444;
+        color: white;
+        text-align: center;
+    }
+
+    .logout-btn:hover {
+        background-color: #cc0000;
+    }
+
+    .logout-link {
+        color: white;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Grades specific styles */
+    .main-content {
+        padding: 2rem;
+        overflow-y: auto;
+    }
+
+    .grades-overview {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .grades-overview h3 {
+        color: #36A9E1;
+        margin-bottom: 2rem;
+        font-size: 1.8rem;
+    }
+
+    .overall-performance {
+        margin-bottom: 3rem;
+    }
+
+    .performance-card {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .grade-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 1.5rem auto;
+        font-size: 2rem;
+        font-weight: bold;
+        color: white;
+        position: relative;
+    }
+
+    .letter-grade {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-top: 0.2rem;
+        display: block;
+    }
+
+    .grade-value {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .grade-value .letter-grade {
+        font-size: 1rem;
+        background-color: var(--light-bg);
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+    }
+
+    .subjects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .subject-card {
+        background-color: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .subject-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .subject-header h4 {
+        color: #36A9E1;
+        margin-bottom: 0.5rem;
+    }
+
+    .teacher-name {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .grade-info {
+        text-align: center;
+    }
+
+    .subject-average {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .subject-average h5 {
+        color: #495057;
+        margin-bottom: 1rem;
+    }
+
+    .category-grades {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .category-grade {
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .category-name {
+        display: block;
+        color: #495057;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .grade-date {
+        color: #6c757d;
+        font-size: 0.8rem;
+    }
+
+    .no-grade {
+        color: #6c757d;
+        font-style: italic;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    /* Grade color classes */
+    .excellent {
+        background-color: #28a745;
+    }
+
+    .good {
+        background-color: #17a2b8;
+    }
+
+    .average {
+        background-color: #ffc107;
+        color: #000 !important;
+    }
+
+    .needs-improvement {
+        background-color: #dc3545;
+    }
+
+    .grade-value.excellent {
+        color: #28a745;
+        background-color: transparent;
+    }
+
+    .grade-value.good {
+        color: #17a2b8;
+        background-color: transparent;
+    }
+
+    .grade-value.average {
+        color: #856404;
+        background-color: transparent;
+    }
+
+    .grade-value.needs-improvement {
+        color: #dc3545;
+        background-color: transparent;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .dashboard-content {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            display: flex;
+            padding: 1rem;
+            border-right: none;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .nav-item {
+            margin: 0 0.5rem;
+        }
+
+        .subjects-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .no-grade-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 1.5rem auto;
+        background-color: var(--secondary-color);
+        color: white;
+        font-size: 1rem;
+        text-align: center;
+        padding: 1rem;
+    }
+</style>
+{% endblock %} 

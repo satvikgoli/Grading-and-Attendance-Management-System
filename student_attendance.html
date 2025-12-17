@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance Records{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('dashboard') }}">Student Dashboard</a>
+        <div class="d-flex">
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Attendance Records</h2>
+    
+    {% for subject_name, data in attendance_by_subject.items() %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">{{ subject_name }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="attendance-stat">
+                        <h4>Attendance Rate</h4>
+                        <p class="percentage">{{ "%.1f"|format(data.percentage) }}%</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="attendance-stat">
+                        <h4>Total Classes</h4>
+                        <p>{{ data.total_classes }}</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="attendance-stat">
+                        <h4>Present</h4>
+                        <p>{{ data.present_count }}</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="attendance-stat">
+                        <h4>Absent</h4>
+                        <p>{{ data.total_classes - data.present_count }}</p>
+                    </div>
+                </div>
+            </div>
+
+            {% if data.records %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in data.records %}
+                        <tr>
+                            <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <span class="badge {% if record.status == 'present' %}bg-success{% else %}bg-danger{% endif %}">
+                                    {{ record.status|title }}
+                                </span>
+                            </td>
+                            <td>{{ record.notes or '-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">No attendance records found for this subject.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+.attendance-stat {
+    text-align: center;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+}
+
+.attendance-stat:hover {
+    transform: translateY(-2px);
+}
+
+.attendance-stat h4 {
+    font-size: 1.1rem;
+    color: #36A9E1;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.attendance-stat p {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.attendance-stat .percentage {
+    color: #28a745;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.card-header {
+    border-radius: 8px 8px 0 0 !important;
+    padding: 1rem 1.5rem;
+}
+
+.card-header h3 {
+    font-size: 1.4rem;
+    font-weight: 500;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    font-weight: 500;
+    color: #36A9E1;
+}
+
+.badge {
+    padding: 0.5em 1em;
+    font-weight: 500;
+}
+
+.navbar {
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    color: #36A9E1;
+    font-weight: 500;
+    font-size: 1.2rem;
+}
+
+.btn-outline-danger {
+    border-width: 2px;
+    font-weight: 500;
+}
+</style>
+{% endblock %} 
